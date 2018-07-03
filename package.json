@@ -1,0 +1,41 @@
+{
+  "name": "rpscript-api-cheerio",
+  "version": "0.1.0",
+  "description": "RPScript API for cheerio",
+  "keywords": [
+    "api",
+    "rpa",
+    "rpscript",
+    "cheerio"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "license": "Apache-2.0",
+  "author": "James Chong",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wei3hua2/rpscript-api-cheerio.git"
+  },
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "tsc",
+    "test": "mocha -r ts-node/register test/**.ts",
+    "publish": "tsc && npm publish"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "rpscript-interface": "^0.5.3"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/cheerio": "^0.22.8",
+    "@types/glob": "^5.0.35",
+    "@types/node": "^10.5.1",
+    "@types/request": "^2.47.1",
+    "@types/request-promise": "^4.1.41",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "ts-node": "^6.0.5",
+    "typescript": "^2.8.3"
+  }
+}
