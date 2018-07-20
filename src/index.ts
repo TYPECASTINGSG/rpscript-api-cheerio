@@ -7,20 +7,19 @@ import {RpsContext,RpsModule,rpsAction} from 'rpscript-interface';
 @RpsModule("cheerio")
 export default class RPSCheerio {
 
-  @rpsAction({verbName:'load-cheerio'})
-  async load (ctx:RpsContext,opts:Object, htmlContent:any) : Promise<any>{
+  @rpsAction({verbName:'cheerio'})
+  async load (ctx:RpsContext,opts:Object, htmlContent:any) : Promise<CheerioStatic>{
     return cheerio.load(htmlContent);
   }
 
-  @rpsAction({verbName:'exec-cheerio'})
-  async execute (ctx:RpsContext,opts:Object, obj:any, ...chain:any[]) : Promise<any>{
+  @rpsAction({verbName:'query-cheerio'})
+  async execute (ctx:RpsContext,opts:Object, obj:any, ...chain:any[]) : Promise<string>{
 
     //map data structure
     let placeholder:any = [{fn:'',param:[]}];
     chain.forEach(c => {
       if(typeof c === 'symbol')placeholder.push({fn:c,param:[]});
       else placeholder[ placeholder.length -1 ].param.push(c);
-      
     });
 
     //execute
@@ -29,7 +28,7 @@ export default class RPSCheerio {
     for(var i=1;i<placeholder.length;i++){
       let item = placeholder[i];
       let fnName = item.fn.toString();
-      
+
       fnName = fnName.replace('Symbol(','');  //whatever
       fnName = fnName.replace(')','');
 
