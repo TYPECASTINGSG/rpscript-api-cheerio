@@ -9,9 +9,15 @@ m.describe('Cheerio', () => {
   m.it('should load content', async function () {
     let c = new RPSCheerio;
 
-    let output = await c.load(new RpsContext,{},'<h2 class="title">Hello world</h2>');
+    let output = await c.load(new RpsContext,{},'<h2 class="title">Hello <span class="wei">wei</span> world</h2>');
     
-    expect(output('h2.title').text()).to.be.equals('Hello world');
+    expect(output('.wei').text()).to.be.equals('wei');
+
+    let chain = await c.execute(new RpsContext,{},output,'.wei', Symbol('text'));
+    let chain2 = await c.execute(new RpsContext,{},output,'h2', Symbol('children'),Symbol('first'),Symbol('text'));
+
+    expect(chain).to.be.equals('wei');
+    expect(chain2).to.be.equals('wei');
 
   }).timeout(0);
 
