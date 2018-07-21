@@ -20,7 +20,12 @@ export default class RPSCheerio {
   }
 
   @rpsAction({verbName:'cheerio'})
-  async cheerio (ctx:RpsContext,opts:Object, obj:any) : Promise<Cheerio>{
+  async cheerio (ctx:RpsContext,opts:Object) : Promise<CheerioAPI>{
+    return cheerio;
+  }
+
+  @rpsAction({verbName:'convert-to-cheerio'})
+  async convertCheerio (ctx:RpsContext,opts:Object, obj:any) : Promise<Cheerio>{
     return cheerio(obj);
   }
 
