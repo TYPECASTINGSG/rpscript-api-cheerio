@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "rpscript-interface": "^0.6.1"
+    "rpscript-interface": "^0.6.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",

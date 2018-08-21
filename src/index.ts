@@ -1,60 +1,82 @@
 import cheerio from 'cheerio';
-import {RpsContext,RpsModule,rpsAction} from 'rpscript-interface';
+import {RpsContext,RpsModule,rpsAction,R} from 'rpscript-interface';
 
-/** Cheerio Module
+/** Html document traversal and manipulation with cheerio
+ * @see {@link https://www.npmjs.com/package/cheerio}
  * @namespace Cheerio
+ * 
+ * @example
+ * rps install cheerio
 */
 @RpsModule("cheerio")
 export default class RPSCheerio {
 
-  @rpsAction({verbName:'load-cheerio'})
-  async load (ctx:RpsContext,opts:Object, ...params:any[]) : Promise<CheerioStatic|Cheerio>{
-    if(params.length === 1)
-      return cheerio.load(params[0]);
-    else if(params.length === 2)
-      return cheerio(params[0],params[1]);
-    else if(params.length === 3)
-      return cheerio(params[0],params[1],params[2]);
-
-    else throw new Error('Invalid number of arguments');
-  }
-
+  /**
+ * @function cheerio
+ * @memberof Cheerio
+ * @example
+ * ; load document to cheerio
+ * cheerio "<h2 class='title'>Hello <span class='wei'>wei</span> world</h2>" 'h2' | 'doc'
+ * selector $doc Children First Text
+ * 
+ * @param {string} document Html document.
+ * @param {string} context Optional context.
+ * @return {Cheerio} cheerio object.
+ * @summary cheerio :: (String, String?) → Cheerio
+ * 
+*/
   @rpsAction({verbName:'cheerio'})
-  async cheerio (ctx:RpsContext,opts:Object) : Promise<CheerioAPI>{
-    return cheerio;
+  async load (ctx:RpsContext,opts:Object, doc:any, context?:any) : Promise<Cheerio>{
+    if(!context) return cheerio.load(doc).root();
+    else return cheerio(doc,context);
   }
 
-  @rpsAction({verbName:'convert-to-cheerio'})
-  async convertCheerio (ctx:RpsContext,opts:Object, obj:any) : Promise<Cheerio>{
-    return cheerio(obj);
-  }
-
-  @rpsAction({verbName:'query-cheerio'})
+/**
+ * @function selector
+ * @memberof Cheerio
+ * @example
+ * ;load document to cheerio
+ * cheerio "<h2 class='title'>Hello <span class='wei'>wei</span> world</h2>" 'h2' | 'doc'
+ * 
+ * ;equivalent to $('h2').children().first().text() in cheerio
+ * selector $doc Children First Text
+ * 
+ * @param {Cheerio} selector The selector to traverse/manipulate.
+ * @param {...*} chains The chain to navigate. Capital word represents function in cheerio.
+ * 
+ * @summary selector :: Cheerio → ...* → *
+ * 
+ * 
+*/
+  @rpsAction({verbName:'selector'})
   async execute (ctx:RpsContext,opts:Object, obj:Cheerio, ...chain:any[]) : Promise<any>{
 
-    //map data structure
-    // let placeholder:any = [{fn:'',param:[]}];
-    let placeholder:any = [];
-    chain.forEach(c => {
-      if(typeof c === 'symbol')placeholder.push({fn:c,param:[]});
-      else placeholder[ placeholder.length -1 ].param.push(c);
-    });
+    function fn (...chain:any[]) {
+      //map data structure
+      let placeholder:any = [];
+      chain.forEach(c => {
+        if(typeof c === 'symbol')placeholder.push({fn:c,param:[]});
+        else placeholder[ placeholder.length -1 ].param.push(c);
+      });
 
-    //execute
-    // let output = obj.apply(this,placeholder[0].param);
-    let output:any = obj;
+      //execute
+      let output:any = obj;
 
-    for(var i=0;i<placeholder.length;i++){
-      let item = placeholder[i];
-      let fnName = item.fn.toString();
+      for(var i=0;i<placeholder.length;i++){
+        let item = placeholder[i];
+        let fnName = item.fn.toString();
 
-      fnName = fnName.replace('Symbol(','');  //whatever
-      fnName = fnName.replace(')','');
+        fnName = fnName.replace('Symbol(','');  //whatever
+        fnName = fnName.replace(')','');
 
-      output = output[fnName].apply(output,item.param);
+        output = output[fnName].apply(output,item.param);
+      }
+
+      return output;
     }
     
-    return output;
+    if(chain && chain.length > 0) return R.apply(fn,chain);
+    else if(obj) return fn;
   }
   
 }
