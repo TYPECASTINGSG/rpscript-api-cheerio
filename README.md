@@ -10,8 +10,8 @@ rps install cheerio
 
 ## Changelog
 
-0.2.0 - change the signature of cheerio
-0.1.0 - initial release
+0.3.0 - change the signature of cheerio
+0.2.0 - initial release
 
 ## License
 
